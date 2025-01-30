@@ -36,12 +36,6 @@ cd NED_round1
 flutter pub get
 ```
 
-### install Dependencies
-
-```sh
-flutter pub get
-```
-
 ### To run the code in a browser E.g. chrome
 
 ```sh
@@ -51,8 +45,6 @@ flutter run -d chrome
 ## Dependencies (Packages Used)
 
 This project uses the following Flutter packages:
-
-### Package Purpose
 
 **http**: API requests for fetching UI configurations
 
