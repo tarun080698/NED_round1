@@ -12,7 +12,7 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double btn_width = MediaQuery.of(context).size.width * 0.8 * 0.3;
+    double btnWidth = MediaQuery.of(context).size.width * 0.8 * 0.3;
 
     if (type == 'filled') {
       return FilledButton(
@@ -20,8 +20,8 @@ class CustomButton extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           foregroundColor: Colors.white,
           backgroundColor: Colors.blue,
-          minimumSize: Size(btn_width * 0.7, 70),
-          maximumSize: Size(btn_width, 70),
+          minimumSize: Size(btnWidth * 0.7, 70),
+          maximumSize: Size(btnWidth, 70),
           padding: const EdgeInsets.all(8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -42,8 +42,8 @@ class CustomButton extends StatelessWidget {
           // minimumSize: const Size(150, 70),
           // maximumSize: const Size(512, 70),
 
-          minimumSize: Size(btn_width * 0.7, 70),
-          maximumSize: Size(btn_width, 70),
+          minimumSize: Size(btnWidth * 0.7, 70),
+          maximumSize: Size(btnWidth, 70),
           padding: const EdgeInsets.all(8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -61,8 +61,8 @@ class CustomButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         foregroundColor: Colors.white,
         backgroundColor: Colors.blue,
-        minimumSize: Size(btn_width * 0.7, 70),
-        maximumSize: Size(btn_width, 70),
+        minimumSize: Size(btnWidth * 0.7, 70),
+        maximumSize: Size(btnWidth, 70),
         padding: const EdgeInsets.all(8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),

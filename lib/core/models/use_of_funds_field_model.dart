@@ -3,6 +3,8 @@ class UseOfFundsFormFields {
   final String description;
   final double amount;
 
+  // this is a simple model for the list of use of funds displayed at the end of the form
+
   UseOfFundsFormFields({
     required this.type,
     required this.description,

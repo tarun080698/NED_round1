@@ -28,17 +28,17 @@ class FormModel {
   });
 
   factory FormModel.fromList(List<dynamic> list) {
-    // 1) Convert each item in the list to a FormFieldConfig.
+    //  Convert item in the list to FormFieldConfig model type.
     final FormFieldConfigs = list
         .map((item) => FormFieldConfig.fromJson(item as Map<String, dynamic>))
         .toList();
 
-    // 2) Build a map from 'name' -> FormFieldConfig for easy access
+    // Build a map from 'name' as key for this config
     final modelMap = <String, FormFieldConfig>{
       for (var model in FormFieldConfigs) model.name: model
     };
 
-    // 3) Construct the FormModel using the map entries
+    //  Construct the FormModel using the map entries
     return FormModel(
       desired_fee_percentage: modelMap['desired_fee_percentage']!,
       desired_repayment_delay: modelMap['desired_repayment_delay']!,

@@ -15,7 +15,6 @@ class FinanceCard extends StatelessWidget {
     double fundingAmount = results['funding_amount'];
     double feesPercentage = results['desired_fee_percentage'];
     double revenueAmount = results['revenue_amount'];
-    print({fundingAmount, feesPercentage});
     double fees = fundingAmount * feesPercentage;
     double totalRevenueShare = fundingAmount + fees;
 
@@ -40,15 +39,15 @@ class FinanceCard extends StatelessWidget {
                 : 0;
 
     expectedCompletionDate = expectedCompletionDate
-        .add(Duration(days: days)); // ✅ Add repayment delay
+        .add(Duration(days: days)); // Adding repayment delay
 
-    // ✅ Format date as "Month d, yyyy"
+    // Formatting date as "Month d, yyyy"
     String formattedCompletionDate =
         DateFormat("MMMM d, yyyy").format(expectedCompletionDate);
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white, // ✅ Move `color` inside `BoxDecoration`
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 60),
@@ -57,12 +56,12 @@ class FinanceCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Results', style: AppTextStyles.subTitle),
-          const SizedBox(height: 20), // ✅ Fix spacing issue
+          const SizedBox(height: 20),
           CardItem(
             itemKey: "Annual Business Revenue",
             itemValue: '\$${revenueAmount.toStringAsFixed(0)}',
           ),
-          const SizedBox(height: 10), // ✅ Proper spacing
+          const SizedBox(height: 10),
           CardItem(
             itemKey: "Funding Amount",
             itemValue: '\$${fundingAmount.toStringAsFixed(0)}',

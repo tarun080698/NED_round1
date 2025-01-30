@@ -11,7 +11,7 @@ class FinanceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200], // Light background color
+      backgroundColor: Colors.grey[200],
       appBar: const CustomAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -25,8 +25,7 @@ class FinanceScreen extends StatelessWidget {
               height: contentWidth < 1024 ? 1500 : 900,
               padding: contentWidth < 1024
                   ? EdgeInsets.all(10)
-                  : EdgeInsets.symmetric(
-                      horizontal: sidePadding), // ✅ Ensures space on all sides
+                  : EdgeInsets.symmetric(horizontal: sidePadding),
               child: contentWidth < 1024
                   ? Column(
                       children: [

@@ -40,7 +40,7 @@ class _FinanceFormState extends State<FinanceForm> {
 
   void removeItem(int index) {
     setState(() {
-      useOfFunds.removeAt(index); // ✅ Removes item and updates UI
+      useOfFunds.removeAt(index);
     });
   }
 
@@ -52,7 +52,7 @@ class _FinanceFormState extends State<FinanceForm> {
 
   Future<void> fetchUIConfig() async {
     final url = Uri.parse(
-        'https://gist.githubusercontent.com/motgi/8fc373cbfccee534c820875ba20ae7b5/raw/7143758ff2caa773e651dc3576de57cc829339c0/config.json'); // Replace with your API endpoint
+        'https://gist.githubusercontent.com/motgi/8fc373cbfccee534c820875ba20ae7b5/raw/7143758ff2caa773e651dc3576de57cc829339c0/config.json');
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
@@ -76,7 +76,6 @@ class _FinanceFormState extends State<FinanceForm> {
       setState(() {
         isLoading = false;
       });
-      print(e);
     }
   }
 

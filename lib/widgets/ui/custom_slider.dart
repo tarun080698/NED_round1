@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:round_1/core/text_styles.dart';
-import 'package:round_1/widgets/ui/custom_input.dart';
 
 class CustomSlider extends StatelessWidget {
   const CustomSlider({
