@@ -26,7 +26,7 @@ A **Flutter-based financial calculator** that dynamically generates forms based 
 ### Clone the Repository
 
 ```sh
-git clone https://github.com/your-username/NED_round1.git
+git clone https://github.com/tarun080698/NED_round1.git
 cd NED_round1
 ```
 
