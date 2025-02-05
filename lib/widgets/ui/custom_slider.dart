@@ -47,9 +47,9 @@ class CustomSlider extends StatelessWidget {
               divisions: 10,
               activeColor: Colors.blue,
               thumbColor: Colors.blue,
-              label: "\$${(value).toStringAsFixed(2)}",
+              label: "\$${(value).toStringAsFixed(0)}",
               onChanged: (double newValue) =>
-                  onChanged(double.parse(newValue.toStringAsFixed(2))),
+                  onChanged(double.parse(newValue.toStringAsFixed(0))),
             ),
           ],
         ),

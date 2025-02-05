@@ -24,7 +24,7 @@ class FinanceForm extends StatefulWidget {
 }
 
 class _FinanceFormState extends State<FinanceForm> {
-  late FormModel formFieldsConfig;
+  late FormModel formFieldsConfig = FormModel.fromList([]);
   bool isLoading = true;
   String formula = "(0.156 / 6.2055 / revenue_amount) * (funding_amount * 10)";
 
@@ -58,11 +58,9 @@ class _FinanceFormState extends State<FinanceForm> {
       if (response.statusCode == 200) {
         formFieldsConfig = FormModel.fromList(json.decode(response.body));
 
-        recompute('funding_amount',
-            double.parse(formFieldsConfig.funding_amount_min.value));
         recompute('desired_fee_percentage',
             double.parse(formFieldsConfig.desired_fee_percentage.value));
-
+        widget.updateResults('fees_percentage', computeFormula());
         setState(() {
           isLoading = false;
         });
@@ -82,27 +80,36 @@ class _FinanceFormState extends State<FinanceForm> {
   final _formKey = GlobalKey<FormState>();
 
   void recompute(key, dynamic value) {
-    if (key == 'revenue_amount') {
-      // update funding_amount
-      if (value <= double.parse(formFieldsConfig.funding_amount_min.value)) {
-        widget.updateResults('funding_amount',
-            double.parse(formFieldsConfig.funding_amount_min.value));
-      } else {
-        widget.updateResults(key, value);
-      }
-      widget.updateResults('fees_percentage', computeFormula());
-    } else if (key == 'funding_amount') {
-      if (value < double.parse(formFieldsConfig.funding_amount_min.value)) {
-        widget.updateResults('funding_amount',
-            double.parse(formFieldsConfig.funding_amount_min.value));
-      } else {
-        widget.updateResults(key, value);
-      }
+    widget.updateResults(key, value);
+  }
 
-      widget.updateResults('fees_percentage', computeFormula());
+  void handleFundingAmount(value) {
+    if (value.toString().isEmpty ||
+        double.parse(value) <=
+            double.parse(formFieldsConfig.funding_amount_min.value)) {
+      widget.updateResults('funding_amount',
+          double.parse(formFieldsConfig.funding_amount_min.value));
+    } else if (double.parse(value) >=
+        double.parse(formFieldsConfig.funding_amount_max.value)) {
+      widget.updateResults('funding_amount',
+          double.parse(formFieldsConfig.funding_amount_max.value));
     } else {
-      widget.updateResults(key, value);
+      widget.updateResults('funding_amount', double.parse(value));
     }
+    widget.updateResults('fees_percentage', computeFormula());
+  }
+
+  void handleRevenueChange(value) {
+    if (value == "" ||
+        (value / 3) < double.parse(formFieldsConfig.funding_amount_min.value)) {
+      widget.updateResults('funding_amount',
+          double.parse(formFieldsConfig.funding_amount_min.value));
+      widget.updateResults('revenue_amount',
+          double.parse(formFieldsConfig.funding_amount_min.value));
+    } else {
+      widget.updateResults('revenue_amount', value);
+    }
+    widget.updateResults('fees_percentage', computeFormula());
   }
 
   double computeFormula() {
@@ -118,6 +125,7 @@ class _FinanceFormState extends State<FinanceForm> {
 
       double rate = exp.evaluate(EvaluationType.REAL, cm);
 
+// bonus
       double minRate =
           double.parse(formFieldsConfig.revenue_percentage_min.value);
       double maxRate =
@@ -134,6 +142,16 @@ class _FinanceFormState extends State<FinanceForm> {
   @override
   Widget build(BuildContext context) {
     double computedValue = computeFormula();
+
+    double minValue = double.parse(formFieldsConfig.funding_amount_min.value);
+    double computedMax = widget.results['revenue_amount'] / 3;
+    double maxValue =
+        (computedMax < double.parse(formFieldsConfig.funding_amount_max.value))
+            ? computedMax
+            : double.parse(formFieldsConfig.funding_amount_max.value);
+
+    double finalMaxValue = (maxValue >= minValue) ? maxValue : minValue;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -160,17 +178,9 @@ class _FinanceFormState extends State<FinanceForm> {
                       label: formFieldsConfig.revenue_amount.label,
                       hint: formFieldsConfig.revenue_amount.placeholder,
                       value: widget.results['revenue_amount'].toString(),
-                      onChanged: (value) => {
-                            if (double.parse(value) <=
-                                double.parse(
-                                    formFieldsConfig.funding_amount_min.value))
-                              recompute(
-                                  'revenue_amount',
-                                  double.parse(formFieldsConfig
-                                      .funding_amount_min.value))
-                            else
-                              recompute('revenue_amount', double.parse(value))
-                          }),
+                      onChanged: (value) {
+                        handleRevenueChange(value);
+                      }),
                   Wrap(alignment: WrapAlignment.spaceBetween, children: [
                     Text(
                       formFieldsConfig.funding_amount.label,
@@ -182,47 +192,18 @@ class _FinanceFormState extends State<FinanceForm> {
                             label: '',
                             min: double.parse(
                                 formFieldsConfig.funding_amount_min.value),
-                            max: widget.results['revenue_amount'] > 0 &&
-                                    widget.results['revenue_amount'] / 3 <
-                                        double.parse(formFieldsConfig
-                                            .funding_amount_max.value)
-                                ? widget.results['revenue_amount'] / 3 <
-                                        double.parse(formFieldsConfig
-                                            .funding_amount_min.value)
-                                    ? double.parse(formFieldsConfig
-                                        .funding_amount_min.value)
-                                    : widget.results['revenue_amount'] / 3
-                                : double.parse(
-                                    formFieldsConfig.funding_amount_max.value),
+                            max: finalMaxValue,
                             value: widget.results['funding_amount'],
                             onChanged: (newValue) =>
-                                recompute('funding_amount', newValue))),
+                                handleFundingAmount(newValue.toString()))),
                     SizedBox(
                       width: 150,
                       child: CustomInput(
                           label: "",
                           hint: formFieldsConfig.funding_amount_min.value,
                           value: widget.results['funding_amount'].toString(),
-                          onChanged: (newValue) => {
-                                if (double.parse(newValue) <
-                                    double.parse(formFieldsConfig
-                                        .funding_amount_min.value))
-                                  recompute(
-                                      'funding_amount',
-                                      double.parse(
-                                          double.parse(formFieldsConfig.funding_amount_min.value)
-                                              .toStringAsFixed(2)))
-                                else if (double.parse(newValue) >
-                                    double.parse(formFieldsConfig
-                                        .funding_amount_max.value))
-                                  recompute(
-                                      'funding_amount',
-                                      double.parse(double.parse(
-                                              formFieldsConfig.funding_amount_max.value)
-                                          .toStringAsFixed(2)))
-                                else
-                                  recompute('funding_amount', double.parse(double.parse(newValue).toStringAsFixed(2)))
-                              }),
+                          onChanged: (newValue) =>
+                              {handleFundingAmount(newValue)}),
                     )
                   ]),
                   Row(spacing: 20, children: [

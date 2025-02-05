@@ -9,26 +9,30 @@ class FinanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String paymentFrequency = results['payment_frequency'] ?? 'monthly';
+    String paymentFrequency = results['payment_frequency'];
     int multiplyingFactor = paymentFrequency == 'weekly' ? 52 : 12;
 
     double fundingAmount = results['funding_amount'];
-    double feesPercentage = results['desired_fee_percentage'];
+    double desiredFeesPercentage = results['desired_fee_percentage']; // 0.6
+    double feesPercentage = results['fees_percentage'];
     double revenueAmount = results['revenue_amount'];
-    double fees = fundingAmount * feesPercentage;
+    double fees = fundingAmount * desiredFeesPercentage;
     double totalRevenueShare = fundingAmount + fees;
 
-    double expectedTransfersA = totalRevenueShare * multiplyingFactor;
-    double expectedTransfersB = revenueAmount * feesPercentage;
-    double expectedTransfers = (expectedTransfersB != 0)
-        ? (expectedTransfersA / expectedTransfersB)
-        : 0;
+    double expectedTransfers = 0;
+    if (revenueAmount > 0 && feesPercentage > 0) {
+      expectedTransfers = (totalRevenueShare * multiplyingFactor) /
+          (revenueAmount * (feesPercentage / 100));
+    }
+
+    int expectedTransfersInt =
+        expectedTransfers.isFinite ? expectedTransfers.ceil() : 0;
 
     DateTime currentDate = DateTime.now();
-
-    DateTime expectedCompletionDate = (paymentFrequency == "weekly")
-        ? currentDate.add(Duration(days: expectedTransfers.toInt() * 7))
-        : currentDate.add(Duration(days: expectedTransfers.toInt() * 30));
+    Duration durationToAdd = (paymentFrequency == "weekly")
+        ? Duration(days: expectedTransfersInt * 7) // Weekly payments
+        : Duration(days: expectedTransfersInt * 30); // Monthly payments
+    DateTime expectedCompletionDate = currentDate.add(durationToAdd);
 
     int days = results['repayment_delay'] == '30 days'
         ? 30
@@ -44,6 +48,18 @@ class FinanceCard extends StatelessWidget {
     // Formatting date as "Month d, yyyy"
     String formattedCompletionDate =
         DateFormat("MMMM d, yyyy").format(expectedCompletionDate);
+
+    // computing APR
+    // Expected APR = (((desired_fee_percentage*funding_amount)/funding_amount)/[(Expected Completion - Today) in days])x365X100
+
+    double aprNumerator =
+        (desiredFeesPercentage * fundingAmount) / fundingAmount;
+    int daysUntilCompletion =
+        expectedCompletionDate.difference(currentDate).inDays;
+    double aprDenominator =
+        daysUntilCompletion.toDouble(); // Convert to double for calculation
+
+    double finalApr = ((aprNumerator / aprDenominator) * 365) * 100;
 
     return Container(
       decoration: BoxDecoration(
@@ -69,9 +85,13 @@ class FinanceCard extends StatelessWidget {
           const SizedBox(height: 10),
           CardItem(
             itemKey: "Fees",
-            itemValue: '(${(feesPercentage * 100)}%) '
+            itemValue: '(${(desiredFeesPercentage * 100)}%) '
                 '\$${fees.toStringAsFixed(0)}',
           ),
+          const SizedBox(height: 10),
+          CardItem(
+              itemKey: "Expected APR",
+              itemValue: '${finalApr.toStringAsFixed(2)}%'),
           const SizedBox(height: 10),
           CardItem(
             itemKey: "Total Revenue Share",

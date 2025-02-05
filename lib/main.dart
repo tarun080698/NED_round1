@@ -17,8 +17,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final Map<String, dynamic> results = {
     'revenue_amount': 250000.0,
-    'funding_amount': 0.0,
-    'fees_percentage': 0.0,
+    'funding_amount': 25000.0,
+    'fees_percentage': 0.0, // revenue_percentage
     'desired_fee_percentage': 0.0,
     'repayment_delay': '30 days',
     'payment_frequency': 'weekly',

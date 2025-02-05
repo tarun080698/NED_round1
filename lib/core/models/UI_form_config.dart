@@ -1,17 +1,17 @@
 import 'package:round_1/core/models/form_field_config.dart';
 
 class FormModel {
-  FormFieldConfig desired_fee_percentage;
-  FormFieldConfig desired_repayment_delay;
-  FormFieldConfig funding_amount;
-  FormFieldConfig revenue_amount;
-  FormFieldConfig revenue_percentage;
-  FormFieldConfig revenue_shared_frequency;
-  FormFieldConfig use_of_funds;
-  FormFieldConfig funding_amount_max;
-  FormFieldConfig funding_amount_min;
-  FormFieldConfig revenue_percentage_min;
-  FormFieldConfig revenue_percentage_max;
+  final FormFieldConfig desired_fee_percentage;
+  final FormFieldConfig desired_repayment_delay;
+  final FormFieldConfig funding_amount;
+  final FormFieldConfig revenue_amount;
+  final FormFieldConfig revenue_percentage;
+  final FormFieldConfig revenue_shared_frequency;
+  final FormFieldConfig use_of_funds;
+  final FormFieldConfig funding_amount_max;
+  final FormFieldConfig funding_amount_min;
+  final FormFieldConfig revenue_percentage_min;
+  final FormFieldConfig revenue_percentage_max;
 
   FormModel({
     required this.desired_fee_percentage,
@@ -27,30 +27,41 @@ class FormModel {
     required this.revenue_percentage_max,
   });
 
+  /// **Factory constructor that safely initializes missing fields with defaults**
   factory FormModel.fromList(List<dynamic> list) {
-    //  Convert item in the list to FormFieldConfig model type.
-    final FormFieldConfigs = list
+    final formFieldConfigs = list
         .map((item) => FormFieldConfig.fromJson(item as Map<String, dynamic>))
         .toList();
 
-    // Build a map from 'name' as key for this config
     final modelMap = <String, FormFieldConfig>{
-      for (var model in FormFieldConfigs) model.name: model
+      for (var model in formFieldConfigs) model.name: model
     };
 
-    //  Construct the FormModel using the map entries
+    // **Default values for missing fields**
+    FormFieldConfig defaultField(String name, String defaultValue) {
+      return modelMap[name] ??
+          FormFieldConfig(
+              name: name,
+              value: defaultValue,
+              label: "",
+              placeholder: "",
+              tooltip: '');
+    }
+
     return FormModel(
-      desired_fee_percentage: modelMap['desired_fee_percentage']!,
-      desired_repayment_delay: modelMap['desired_repayment_delay']!,
-      funding_amount: modelMap['funding_amount']!,
-      revenue_amount: modelMap['revenue_amount']!,
-      revenue_percentage: modelMap['revenue_percentage']!,
-      revenue_shared_frequency: modelMap['revenue_shared_frequency']!,
-      use_of_funds: modelMap['use_of_funds']!,
-      funding_amount_max: modelMap['funding_amount_max']!,
-      funding_amount_min: modelMap['funding_amount_min']!,
-      revenue_percentage_min: modelMap['revenue_percentage_min']!,
-      revenue_percentage_max: modelMap['revenue_percentage_max']!,
+      desired_fee_percentage: defaultField('desired_fee_percentage', '0'),
+      desired_repayment_delay:
+          defaultField('desired_repayment_delay', '30 days'),
+      funding_amount: defaultField('funding_amount', '25000'),
+      revenue_amount: defaultField('revenue_amount', '100000'),
+      revenue_percentage: defaultField('revenue_percentage', '5'),
+      revenue_shared_frequency:
+          defaultField('revenue_shared_frequency', 'monthly'),
+      use_of_funds: defaultField('use_of_funds', ''),
+      funding_amount_max: defaultField('funding_amount_max', '100000'),
+      funding_amount_min: defaultField('funding_amount_min', '25000'),
+      revenue_percentage_min: defaultField('revenue_percentage_min', '0'),
+      revenue_percentage_max: defaultField('revenue_percentage_max', '100'),
     );
   }
 }
